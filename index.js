@@ -12,7 +12,10 @@ app.use(express.json());
 
 app.use(cors());
 mongoose
-  .connect(process.env.DATABASE_URL)
+  .connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connect to Database Successfully"))
   .catch((err) => console.log(`Conntect to Database Failed: ${err}`));
 
