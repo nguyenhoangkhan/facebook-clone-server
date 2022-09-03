@@ -1,11 +1,11 @@
-const User = require("../models/userModel.js");
+const User = require("../models/user.js");
 const bcrypt = require("bcrypt");
 
 const validation = require("../helpers/validation.js");
 const tokens = require("../helpers/tokens.js");
-// const mailer = require("../helpers/mailer.js");
 
 class registerController {
+  // */register [POST]
   async register(req, res) {
     try {
       const {
@@ -21,7 +21,7 @@ class registerController {
 
       // Check valid email address
       if (!validation.email(email)) {
-        return res.status(401).json({ message: "Invalid email." });
+        return res.status(401).json({ message: "Địa chỉ Email không hợp lệ." });
       }
       // Check exits email
       const checkExistEmail = await User.findOne({ email });
@@ -29,30 +29,30 @@ class registerController {
       if (checkExistEmail) {
         return res
           .status(401)
-          .json({ message: "This email address already exist." });
+          .json({ message: "Địa chỉ Email đã tồn tại. Vui lòng thử lại!" });
       }
 
       // Check first_name length
       if (!validation.length(first_name, 3, 30)) {
         return res.status(401).json({
-          message:
-            "First name must be at least 3 characters and less than 30 characters.",
+          message: "Tên phải có từ 3 đến 30 kí tự.",
         });
       }
+
       // Check last_name length
       if (!validation.length(last_name, 3, 30)) {
         return res.status(401).json({
-          message:
-            "Last name must be at least 3 characters and less than 30 characters.",
+          message: "Họ phải có từ 3 đến 30 kí tự.",
         });
       }
+
       // Check password length
-      if (!validation.length(password, 6, 40)) {
+      if (!validation.length(password, 6)) {
         return res.status(401).json({
-          message:
-            "Password must be at least 3 characters and less than 30 characters.",
+          message: "Mật khẩu tối thiểu từ 6 ký tự.",
         });
       }
+
       // Hash Password
       const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -73,17 +73,6 @@ class registerController {
         gender,
       }).save();
 
-      // Send Email validation
-      //   const emailVerification = tokens.generateToken(
-      //     {
-      //       id: user._id.toString(),
-      //     },
-      //     "5m"
-      //   );
-      //   const url = `${process.env.BASE_URL}/activate/${emailVerification}`;
-      //   mailer.sendVerificationEmail(user.email, user.first_name, url);
-
-      // Generate token to user._id
       const token = tokens.generateToken(
         {
           id: user._id.toString(),
@@ -98,24 +87,25 @@ class registerController {
         first_name: user.first_name,
         last_name: user.last_name,
         token,
-        message: "Register successfully!",
+        message: "Đăng ký tài khoản thành công!",
       });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   }
+  // */login [POST]
   async login(req, res) {
     try {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        res.status(400).json({ message: "The email you entered is not exist" });
+        return res.status(400).json({ message: "Địa chỉ Email không tồn tại" });
       }
       const checkPassword = await bcrypt.compare(password, user.password);
       if (!checkPassword) {
-        res
-          .status(401)
-          .json({ message: "The password you entered is incorrect" });
+        return res.status(401).json({
+          message: "Mật khẩu bạn nhập không chính xác",
+        });
       }
       // Generate token to user._id
       const token = tokens.generateToken(
@@ -132,10 +122,19 @@ class registerController {
         first_name: user.first_name,
         last_name: user.last_name,
         token,
-        message: "Login successfully!",
+        message: "Đăng nhập thành công!",
       });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  async auth(req, res) {
+    try {
+      const user = req.user;
+      console.log("Hello from authController");
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
     }
   }
 }
