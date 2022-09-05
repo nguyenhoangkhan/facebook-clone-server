@@ -73,12 +73,9 @@ class registerController {
         gender,
       }).save();
 
-      const token = tokens.generateToken(
-        {
-          id: user._id.toString(),
-        },
-        "7d"
-      );
+      const token = tokens.generateToken({
+        id: user._id.toString(),
+      });
       // Send information to frontend
       return res.send({
         id: user._id,
@@ -113,12 +110,9 @@ class registerController {
         });
       }
       // Generate token to user._id
-      const token = tokens.generateToken(
-        {
-          id: user._id.toString(),
-        },
-        "7d"
-      );
+      const token = tokens.generateToken({
+        id: user._id.toString(),
+      });
       // Send information to frontend
       return res.send({
         id: user._id,
@@ -129,15 +123,6 @@ class registerController {
         token,
         message: "Đăng nhập thành công!",
       });
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
-    }
-  }
-
-  async auth(req, res) {
-    try {
-      const user = req.user;
-      console.log("Hello from authController");
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
