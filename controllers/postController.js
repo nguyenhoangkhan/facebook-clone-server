@@ -4,7 +4,6 @@ class PostController {
   // Create Post [POST]
   async index(req, res) {
     try {
-      console.log("ok");
       const { type, background, text, images, user } = req.body;
       await new Post({
         type,
