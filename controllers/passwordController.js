@@ -6,6 +6,7 @@ const Code = require("../models/code.js");
 const { generateCode } = require("../helpers/generateCode.js");
 
 class PasswordController {
+  // Find User [POST]
   async findUser(req, res) {
     try {
       const { email } = req.body;
@@ -21,7 +22,7 @@ class PasswordController {
       return res.status(500).json({ message: err.message });
     }
   }
-
+  // Send Code Reset Password [POST]
   async sendCodeResetPassword(req, res) {
     try {
       const { email } = req.body;
@@ -41,7 +42,7 @@ class PasswordController {
       return res.status(500).json({ message: err.message });
     }
   }
-
+  // Verified Code Reset Password [POST]
   async verifiedCodeResetPassword(req, res) {
     try {
       const { email, code } = req.body;
@@ -59,7 +60,7 @@ class PasswordController {
       return res.status(500).json({ message: err.message });
     }
   }
-
+  // Change Password [POST]
   async changePassword(req, res) {
     try {
       const { email, password } = req.body;

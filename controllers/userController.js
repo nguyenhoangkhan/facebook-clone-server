@@ -5,7 +5,7 @@ const validation = require("../helpers/validation.js");
 const tokens = require("../helpers/tokens.js");
 
 class registerController {
-  // */register [POST]
+  // register [POST]
   async register(req, res) {
     try {
       const {
@@ -98,6 +98,11 @@ class registerController {
     try {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
+      if (!user && !password) {
+        return res
+          .status(400)
+          .json({ message: "Bạn cần điền thông tin đăng nhập" });
+      }
       if (!user) {
         return res.status(400).json({ message: "Địa chỉ Email không tồn tại" });
       }

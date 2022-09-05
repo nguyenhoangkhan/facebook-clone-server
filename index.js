@@ -1,6 +1,6 @@
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 
+const fileUpload = require("express-fileupload");
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 8000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(fileUpload({ useTempFiles: true }));
 
 app.use(cors());
 mongoose
