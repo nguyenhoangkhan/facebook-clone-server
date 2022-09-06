@@ -18,7 +18,8 @@ const userAuth = async (req, res, next) => {
       next();
     });
   } catch (err) {
-    return res.status(500).json({ message: "Token không hợp lệ" });
+    return res.status(500).json({ message: "Token không hợp lệ." });
   }
 };
+
 module.exports = userAuth;

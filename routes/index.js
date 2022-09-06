@@ -5,7 +5,7 @@ const uploadImagesRoute = require("./uploadImages.route");
 
 const router = (app) => {
   app.use("/password", passwordRoute);
-  app.use("/createPost", postRoute);
+  app.use("/post", postRoute);
   app.use("/uploadImages", uploadImagesRoute);
   app.use("/", userRoute);
 };

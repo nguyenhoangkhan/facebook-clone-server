@@ -46,7 +46,6 @@ class PasswordController {
   async verifiedCodeResetPassword(req, res) {
     try {
       const { email, code } = req.body;
-      console.log(req.body);
       const user = await User.findOne({ email });
       const dbCode = await Code.findOne({ user: user._id });
       if (dbCode.code != code) {
@@ -54,7 +53,6 @@ class PasswordController {
           .status(400)
           .json({ message: "Mã xác nhận không chính xác." });
       }
-      console.log("Mã xác nhận chính xác.");
       return res.status(200).json({ message: "Mã xác nhận chính xác." });
     } catch (err) {
       return res.status(500).json({ message: err.message });

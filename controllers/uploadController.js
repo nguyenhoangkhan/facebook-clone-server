@@ -33,7 +33,6 @@ const uploadToCloudinary = async (file, path) => {
       (error, res) => {
         if (error) {
           removeFile(file.tempFilePath);
-          console.log("res err", res);
           return res.status(400).json({ message: "Đăng ảnh thất bại" });
         }
         resolve({ url: res.secure_url });
