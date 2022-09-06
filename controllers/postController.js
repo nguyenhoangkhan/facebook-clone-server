@@ -12,7 +12,7 @@ class PostController {
         images,
         user,
       }).save();
-      return res.status(200).json({ message: "Create Post Successfully." });
+      return res.status(200).json({ message: "Tạo bài viết thành công." });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
