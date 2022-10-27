@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
 const { ObjectId } = mongoose.Schema;
 
 const postSchema = new mongoose.Schema(
@@ -45,5 +46,7 @@ const postSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+// Add plugins
+postSchema.plugin(mongooseDelete, { overrideMethods: "all", deletedAt: true });
 
 module.exports = mongoose.model("Post", postSchema);

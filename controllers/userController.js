@@ -1,4 +1,5 @@
 const User = require("../models/user.js");
+const Post = require("../models/post.js");
 const bcrypt = require("bcrypt");
 
 const validation = require("../helpers/validation.js");
@@ -73,9 +74,12 @@ class registerController {
         gender,
       }).save();
 
-      const token = tokens.generateToken({
-        id: user._id.toString(),
-      });
+      const token = tokens.generateToken(
+        {
+          id: user._id.toString(),
+        },
+        "7d"
+      );
       // Send information to frontend
       return res.send({
         id: user._id,
@@ -110,9 +114,12 @@ class registerController {
         });
       }
       // Generate token to user._id
-      const token = tokens.generateToken({
-        id: user._id.toString(),
-      });
+      const token = tokens.generateToken(
+        {
+          id: user._id.toString(),
+        },
+        "7d"
+      );
       // Send information to frontend
       return res.send({
         id: user._id,
@@ -123,6 +130,16 @@ class registerController {
         token,
         message: "Đăng nhập thành công!",
       });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+  async getProfile(req, res) {
+    try {
+      const { username } = req.params;
+      const user = await User.findOne({ username }).select("-password ");
+      const post = await Post.find({ user: user._id }).populate("user");
+      res.json({ ...user.toObject(), post });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }

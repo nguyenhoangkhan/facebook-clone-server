@@ -23,6 +23,20 @@ class UploadController {
       return res.status(500).json({ message: err.message });
     }
   }
+  getImagesList(req, res) {
+    const { path, order, max } = req.query;
+    cloudinary.v2.search
+      .expression(`${path}`)
+      .sort_by("created_at", `${order}`)
+      .max_results(max)
+      .execute()
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        return res.status(500).json({ message: err });
+      });
+  }
 }
 
 const uploadToCloudinary = async (file, path) => {
