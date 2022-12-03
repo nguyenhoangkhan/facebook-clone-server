@@ -121,7 +121,8 @@ class registerController {
         "7d"
       );
       // Send information to frontend
-      return res.send({
+
+      return res.json({
         id: user._id,
         username: user.username,
         picture: user.picture,
