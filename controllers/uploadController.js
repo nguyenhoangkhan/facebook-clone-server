@@ -8,8 +8,11 @@ cloudinary.config({
 });
 
 class UploadController {
+  // Upload Images [POST]
   async index(req, res) {
     try {
+      console.log("req.body ", req.body);
+
       const { path } = req.body;
       const files = Object.values(req.files).flat();
       const images = [];

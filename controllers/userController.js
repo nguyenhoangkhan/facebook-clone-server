@@ -139,8 +139,22 @@ class registerController {
     try {
       const { username } = req.params;
       const user = await User.findOne({ username }).select("-password ");
-      const post = await Post.find({ user: user._id }).populate("user");
+      const post = await Post.find({ user: user._id })
+        .populate("user", "-password")
+        .sort({ createdAt: "desc" });
       res.json({ ...user.toObject(), post });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+  async uploadPictureProfile(req, res) {
+    try {
+      const { picture } = req.body;
+      const userId = req.user.id;
+
+      const data = await User.findByIdAndUpdate(userId, { picture });
+
+      return res.status(200).json(data);
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }

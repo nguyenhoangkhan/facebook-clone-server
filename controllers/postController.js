@@ -20,7 +20,7 @@ class PostController {
   async get(req, res) {
     try {
       const posts = await Post.find({})
-        .populate("user", "first_name last_name username picture gender")
+        .populate("user", "first_name last_name username picture gender ")
         .sort({ createdAt: "desc" });
       return res.status(200).json(posts);
     } catch (err) {
@@ -43,7 +43,7 @@ class PostController {
   async getDeletedPosts(req, res) {
     try {
       const posts = await Post.findDeleted({ user: req.body.userId })
-        .populate("user", "first_name last_name username picture gender")
+        .populate("user", "-password")
         .sort({ createdAt: "desc" });
 
       return res.status(200).json(posts);
