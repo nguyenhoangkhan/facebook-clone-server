@@ -147,12 +147,35 @@ class registerController {
       return res.status(500).json({ message: err.message });
     }
   }
+  // Upload User Avatar [PATCH]
   async uploadPictureProfile(req, res) {
     try {
       const { picture } = req.body;
       const userId = req.user.id;
 
-      const data = await User.findByIdAndUpdate(userId, { picture });
+      const data = await User.findByIdAndUpdate(
+        userId,
+        { picture },
+        { new: true }
+      );
+
+      return res.status(200).json(data);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  // Upload User Cover [PATCH]
+  async uploadCoverProfile(req, res) {
+    try {
+      const { cover } = req.body;
+      const userId = req.user.id;
+
+      const data = await User.findByIdAndUpdate(
+        userId,
+        { cover },
+        { new: true }
+      );
 
       return res.status(200).json(data);
     } catch (err) {

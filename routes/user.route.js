@@ -7,5 +7,6 @@ router.post("/register", userController.register);
 router.post("/login", userController.login);
 router.get("/:username", userAuth, userController.getProfile);
 router.patch("/picture-profile", userAuth, userController.uploadPictureProfile);
+router.patch("/cover-profile", userAuth, userController.uploadCoverProfile);
 
 module.exports = router;
