@@ -147,7 +147,7 @@ class registerController {
       return res.status(500).json({ message: err.message });
     }
   }
-  // Upload User Avatar [PATCH]
+  // User Avatar [PATCH]
   async uploadPictureProfile(req, res) {
     try {
       const { picture } = req.body;
@@ -165,7 +165,7 @@ class registerController {
     }
   }
 
-  // Upload User Cover [PATCH]
+  // User Cover [PATCH]
   async uploadCoverProfile(req, res) {
     try {
       const { cover } = req.body;
