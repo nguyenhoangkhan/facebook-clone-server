@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const validation = require("../helpers/validation.js");
 const tokens = require("../helpers/tokens.js");
 
-class registerController {
+class userController {
   // register [POST]
   async register(req, res) {
     try {
@@ -138,11 +138,50 @@ class registerController {
   async getProfile(req, res) {
     try {
       const { username } = req.params;
-      const user = await User.findOne({ username }).select("-password ");
-      const post = await Post.find({ user: user._id })
+      const profile = await User.findOne({ username }).select("-password ");
+      const user = await User.findById(req.user.id);
+
+      const friendship = {
+        isFriend: false,
+        isFollowing: false,
+        requestSent: false,
+        requestReceived: false,
+      };
+
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ message: "Không tìm thấy trang cá nhân" });
+      }
+
+      if (
+        user.friends.includes(profile._id) &&
+        profile.friends.includes(user._id)
+      ) {
+        friendship.isFriend = true;
+      }
+
+      if (
+        profile.request.includes(user._id) ||
+        profile.followers.includes(user._id) ||
+        user.following.includes(profile._id)
+      ) {
+        friendship.isFollowing = true;
+      }
+
+      if (profile.request.includes(user._id)) {
+        friendship.requestSent = true;
+      }
+
+      if (user.request.includes(profile._id)) {
+        friendship.requestReceived = true;
+      }
+
+      const post = await Post.find({ user: profile._id })
         .populate("user", "-password")
         .sort({ createdAt: "desc" });
-      res.json({ ...user.toObject(), post });
+
+      return res.json({ ...profile.toObject(), post, friendship });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
@@ -182,5 +221,90 @@ class registerController {
       return res.status(500).json({ message: err.message });
     }
   }
+
+  // User Details [PATCH]
+  async updateUserDetails(req, res) {
+    try {
+      const { details } = req.body;
+      const userId = req.user.id;
+
+      const data = await User.findByIdAndUpdate(
+        userId,
+        { details },
+        { new: true }
+      );
+      return res.status(200).json(data);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  async follow(req, res) {
+    try {
+      if (req.user.id !== req.params.id) {
+        const sender = User.findOne(req.user.id);
+        const receiver = User.findOne(req.params.id);
+
+        if (
+          !receiver.followers.includes(sender._id) &&
+          !sender.following.includes(receiver._id)
+        ) {
+          await receiver.updateOne({
+            $push: { followers: sender._id },
+          });
+          await sender.updateOne({
+            $push: { following: receiver._id },
+          });
+          return res.status(200).json({
+            message: "Đã theo dõi thành công",
+          });
+        } else {
+          return res.status(400).json({
+            message: "Bạn đã theo dõi người này rồi",
+          });
+        }
+      } else {
+        return res.status(400).json({
+          message: "Bạn không thể tự theo dõi chính mình",
+        });
+      }
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  async unFollow(req, res) {
+    try {
+      if (req.user.id !== req.params.id) {
+        const sender = User.findOne(req.user.id);
+        const receiver = User.findOne(req.params.id);
+
+        if (
+          !receiver.followers.includes(sender._id) &&
+          !sender.following.includes(receiver._id)
+        ) {
+          await receiver.updateOne({
+            $pull: { followers: sender._id },
+          });
+          await sender.updateOne({
+            $pull: { following: receiver._id },
+          });
+          return res.status(200).json({
+            message: "Bỏ theo dõi thành công",
+          });
+        } else {
+          return res.status(400).json({
+            message: "Bạn chưa theo dõi người này",
+          });
+        }
+      } else {
+        return res.status(400).json({
+          message: "Bạn không thể tự bỏ theo dõi chính mình",
+        });
+      }
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
 }
-module.exports = new registerController();
+module.exports = new userController();
