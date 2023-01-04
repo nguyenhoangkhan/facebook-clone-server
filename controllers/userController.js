@@ -135,11 +135,21 @@ class userController {
       return res.status(500).json({ message: err.message });
     }
   }
+
   async getProfile(req, res) {
     try {
       const { username } = req.params;
-      const profile = await User.findOne({ username }).select("-password");
+
+      // User
       const user = await User.findById(req.user.id);
+
+      // Current Profile
+      const profile = await User.findOne({ username })
+        .select("-password")
+        .populate(
+          "friends",
+          "first_name last_name username picture friends following followers request"
+        );
 
       const friendship = {
         isFriend: false,
@@ -154,22 +164,31 @@ class userController {
           .json({ message: "Không tìm thấy trang cá nhân" });
       }
 
+      const currentUserInFriendsListOfProfile = profile?.friends.filter(
+        (item) => item._id.equals(user._id)
+      );
+      const currentUserInFollowersListOfProfile = profile?.followers.filter(
+        (item) => item._id.equals(user._id)
+      );
+      const currentUserInRequestListOfProfile = profile?.request.filter(
+        (item) => item._id.equals(user._id)
+      );
+
       if (
         user.friends.includes(profile._id) &&
-        profile.friends.includes(user._id)
+        currentUserInFriendsListOfProfile[0]._id.equals(user._id)
       ) {
         friendship.isFriend = true;
       }
 
       if (
-        profile.request.includes(user._id) ||
-        profile.followers.includes(user._id) ||
-        user.following.includes(profile._id)
+        user.following.includes(profile._id) ||
+        currentUserInFollowersListOfProfile[0]._id.equals(user._id)
       ) {
         friendship.isFollowing = true;
       }
 
-      if (profile.request.includes(user._id)) {
+      if (currentUserInRequestListOfProfile[0].equals(user._id)) {
         friendship.requestSent = true;
       }
 
