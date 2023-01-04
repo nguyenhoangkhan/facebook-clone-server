@@ -138,7 +138,7 @@ class userController {
   async getProfile(req, res) {
     try {
       const { username } = req.params;
-      const profile = await User.findOne({ username }).select("-password ");
+      const profile = await User.findOne({ username }).select("-password");
       const user = await User.findById(req.user.id);
 
       const friendship = {

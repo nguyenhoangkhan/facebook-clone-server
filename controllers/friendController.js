@@ -1,11 +1,12 @@
+const User = require("../models/user.js");
+
 class friendController {
   // Send Add Friend Request [PATCH]
   async addFriend(req, res) {
     try {
       if (req.user.id !== req.params.id) {
-        const sender = User.findOne(req.user.id);
-        const receiver = User.findOne(req.params.id);
-
+        const sender = await User.findById(req.user.id);
+        const receiver = await User.findById(req.params.id);
         if (
           !receiver.request.includes(sender._id) &&
           !receiver.friends.includes(sender._id)
@@ -25,7 +26,7 @@ class friendController {
         } else {
           return res.status(400).json({
             message:
-              "Yêu cầu kết bạn đã được gửi đi, hoặc các bạn đã là bạn bè",
+              "Yêu cầu kết bạn đã được gửi đi trước đó, hoặc các bạn đã là bạn bè",
           });
         }
       } else {
@@ -41,8 +42,8 @@ class friendController {
   async unFriend(req, res) {
     try {
       if (req.user.id !== req.params.id) {
-        const sender = User.findOne(req.user.id);
-        const receiver = User.findOne(req.params.id);
+        const sender = await User.findById(req.user.id);
+        const receiver = await User.findById(req.params.id);
 
         if (
           receiver.friends.includes(sender._id) &&
@@ -72,12 +73,40 @@ class friendController {
       return res.status(500).json({ message: err.message });
     }
   }
+  async deleteFriendRequest(req, res) {
+    try {
+      if (req.user.id !== req.params.id) {
+        const sender = await User.findById(req.user.id);
+        const receiver = await User.findById(req.params.id);
+
+        if (receiver.request.includes(sender._id)) {
+          await receiver.updateOne({
+            $pull: { request: sender._id },
+          });
+
+          return res.status(200).json({
+            message: "Đã hủy yêu cầu kết bạn thành công",
+          });
+        } else {
+          return res.status(400).json({
+            message: "Bạn chưa gửi yêu cầu kết bạn cho người này",
+          });
+        }
+      } else {
+        return res.status(400).json({
+          message: "Bạn không thể xóa yêu cầu kết bạn với chính mình",
+        });
+      }
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
 
   async acceptFriendRequest(req, res) {
     try {
       if (req.user.id !== req.params.id) {
-        const receiver = User.findOne(req.user.id);
-        const sender = User.findOne(req.params.id);
+        const receiver = await User.findById(req.user.id);
+        const sender = await User.findById(req.params.id);
 
         if (receiver.request.includes(sender._id)) {
           await receiver.update({
@@ -115,8 +144,8 @@ class friendController {
   async cancelFriendRequest(req, res) {
     try {
       if (req.user.id !== req.params.id) {
-        const receiver = User.findOne(req.user.id);
-        const sender = User.findOne(req.params.id);
+        const receiver = await User.findById(req.user.id);
+        const sender = await User.findById(req.params.id);
 
         if (receiver.request.includes(sender._id)) {
           await receiver.updateOne({
