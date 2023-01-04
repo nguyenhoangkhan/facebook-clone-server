@@ -242,8 +242,8 @@ class userController {
   async follow(req, res) {
     try {
       if (req.user.id !== req.params.id) {
-        const sender = User.findOne(req.user.id);
-        const receiver = User.findOne(req.params.id);
+        const sender = await User.findById(req.user.id);
+        const receiver = await User.findById(req.params.id);
 
         if (
           !receiver.followers.includes(sender._id) &&
@@ -276,8 +276,8 @@ class userController {
   async unFollow(req, res) {
     try {
       if (req.user.id !== req.params.id) {
-        const sender = User.findOne(req.user.id);
-        const receiver = User.findOne(req.params.id);
+        const sender = await User.findById(req.user.id);
+        const receiver = await User.findById(req.params.id);
 
         if (
           !receiver.followers.includes(sender._id) &&
