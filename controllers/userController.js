@@ -174,22 +174,28 @@ class userController {
         (item) => item._id.equals(user._id)
       );
 
-      if (
-        user.friends.includes(profile._id) &&
-        currentUserInFriendsListOfProfile[0]._id.equals(user._id)
-      ) {
-        friendship.isFriend = true;
+      if (currentUserInFriendsListOfProfile.length) {
+        if (
+          user.friends.includes(profile._id) &&
+          currentUserInFriendsListOfProfile[0]._id.equals(user._id)
+        ) {
+          friendship.isFriend = true;
+        }
       }
 
-      if (
-        user.following.includes(profile._id) ||
-        currentUserInFollowersListOfProfile[0]._id.equals(user._id)
-      ) {
-        friendship.isFollowing = true;
+      if (currentUserInFollowersListOfProfile.length) {
+        if (
+          user.following.includes(profile._id) ||
+          currentUserInFollowersListOfProfile[0]._id.equals(user._id)
+        ) {
+          friendship.isFollowing = true;
+        }
       }
 
-      if (currentUserInRequestListOfProfile[0].equals(user._id)) {
-        friendship.requestSent = true;
+      if (currentUserInRequestListOfProfile.length) {
+        if (currentUserInRequestListOfProfile[0].equals(user._id)) {
+          friendship.requestSent = true;
+        }
       }
 
       if (user.request.includes(profile._id)) {

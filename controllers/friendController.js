@@ -9,7 +9,8 @@ class friendController {
         const receiver = await User.findById(req.params.id);
         if (
           !receiver.request.includes(sender._id) &&
-          !receiver.friends.includes(sender._id)
+          !receiver.friends.includes(sender._id) &&
+          !sender.friends.includes(receiver._id)
         ) {
           await receiver.updateOne({
             $push: { request: sender._id },
