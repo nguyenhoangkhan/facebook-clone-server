@@ -44,13 +44,18 @@ class ReactController {
         post: req.params.postId,
       });
 
+      const currentUserReact = await React.findOne({
+        post: req.params.postId,
+        reactBy: req.user.id,
+      });
+
       if (!reacts) {
         return res
           .status(400)
           .json({ message: "Không có lượt bày tỏ cảm xúc nào" });
       }
 
-      return res.status(200).json(reacts);
+      return res.status(200).json({ reacts, currentUserReact });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
