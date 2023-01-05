@@ -55,7 +55,9 @@ class ReactController {
           .json({ message: "Không có lượt bày tỏ cảm xúc nào" });
       }
 
-      return res.status(200).json({ reacts, currentUserReact });
+      return res
+        .status(200)
+        .json({ reacts, currentUserReact: currentUserReact.react });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
