@@ -20,4 +20,4 @@ const reactModel = new mongoose.Schema(
   { timestamps: true }
 );
 
-// module.exports = mongoose.model("React", reactModel);
+module.exports = mongoose.model("React", reactModel);

@@ -37,6 +37,24 @@ class ReactController {
       return res.status(500).json({ message: err.message });
     }
   }
+
+  async getReacts(req, res) {
+    try {
+      const reacts = await React.find({
+        post: req.params.postId,
+      });
+
+      if (!reacts) {
+        return res
+          .status(400)
+          .json({ message: "Không có lượt bày tỏ cảm xúc nào" });
+      }
+
+      return res.status(200).json(reacts);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = new ReactController();
