@@ -44,20 +44,54 @@ class ReactController {
 
   async getReacts(req, res) {
     try {
-      const reacts = await React.find({
+      const reactsArray = await React.find({
         post: req.params.postId,
       });
+
+      // map value to get explain object contain value
+      const mapReacts = reactsArray.reduce((group, react) => {
+        let key = react["react"];
+
+        if (!group[key]) {
+          group[key] = [];
+        }
+
+        group[key].push(react);
+
+        return group;
+      }, {});
+
+      const reacts = [
+        {
+          react: "like",
+          count: mapReacts["like"] ? mapReacts["like"].length : 0,
+        },
+        {
+          react: "love",
+          count: mapReacts["love"] ? mapReacts["love"].length : 0,
+        },
+        {
+          react: "sad",
+          count: mapReacts["sad"] ? mapReacts["sad"].length : 0,
+        },
+        {
+          react: "haha",
+          count: mapReacts["haha"] ? mapReacts["haha"].length : 0,
+        },
+        {
+          react: "wow",
+          count: mapReacts["wow"] ? mapReacts["wow"].length : 0,
+        },
+        {
+          react: "angry",
+          count: mapReacts["angry"] ? mapReacts["angry"].length : 0,
+        },
+      ];
 
       const currentUserReact = await React.findOne({
         post: req.params.postId,
         reactBy: req.user.id,
       });
-
-      if (!reacts) {
-        return res
-          .status(400)
-          .json({ message: "Không có lượt bày tỏ cảm xúc nào" });
-      }
 
       return res
         .status(200)
