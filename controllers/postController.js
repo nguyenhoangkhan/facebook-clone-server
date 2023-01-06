@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const User = require("../models/user");
 class PostController {
   // Create Post [POST]
   async create(req, res) {
@@ -19,10 +20,32 @@ class PostController {
   // Get All Posts [GET]
   async get(req, res) {
     try {
-      const posts = await Post.find({})
-        .populate("user", "first_name last_name username picture gender ")
+      const followingList = await User.findById(req.user.id).select(
+        "following"
+      );
+
+      const followings = followingList.following;
+
+      const promise = followings.map((user) => {
+        return Post.find({ user })
+          .populate("user", "first_name last_name username picture gender")
+          .populate(
+            "comments.commentBy",
+            "last_name first_name username picture"
+          )
+          .sort({ createdAt: "desc" });
+      });
+      const followingPosts = (await Promise.all(promise)).flat();
+
+      const currentUserPosts = await Post.find({ user: req.user.id })
+        .populate("user", "first_name last_name username picture gender")
         .populate("comments.commentBy", "last_name first_name username picture")
         .sort({ createdAt: "desc" });
+
+      const posts = followingPosts
+        .concat(currentUserPosts)
+        .sort((a, b) => b.createdAt - a.createdAt);
+
       return res.status(200).json(posts);
     } catch (err) {
       return res.status(500).json({ message: err.message });
