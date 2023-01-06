@@ -93,9 +93,11 @@ class ReactController {
         reactBy: req.user.id,
       });
 
-      return res
-        .status(200)
-        .json({ reacts, currentUserReact: currentUserReact.react });
+      return res.status(200).json({
+        reacts,
+        currentUserReact: currentUserReact.react,
+        total: reacts.reduce((acc, curr) => (acc += curr.count), 0),
+      });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
