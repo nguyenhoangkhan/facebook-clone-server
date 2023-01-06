@@ -38,11 +38,17 @@ class SearchController {
         return res.status(200).json(result);
       }
 
-      const result = await User.findByIdAndUpdate(req.user.id, {
-        $set: {
-          "search.$.createdAt": new Date(),
+      const result = await User.updateOne(
+        {
+          _id: req.user.id,
+          "search._id": check._id,
         },
-      });
+        {
+          $set: {
+            "search.$.createdAt": new Date(),
+          },
+        }
+      );
       return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json({ message: err.message });
