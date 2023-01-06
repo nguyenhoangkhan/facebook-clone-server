@@ -5,14 +5,17 @@ class PostController {
   async create(req, res) {
     try {
       const { type, background, text, images, user } = req.body;
-      await new Post({
+      const post = await new Post({
         type,
         background,
         text,
         images,
         user,
       }).save();
-      return res.status(200).json({ message: "Tạo bài viết thành công." });
+
+      post.populate("user", "first_name last_name username gender");
+
+      return res.status(200).json(post);
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
