@@ -14,7 +14,6 @@ class PostController {
       }).save();
 
       post.populate("user", "first_name last_name username gender");
-
       return res.status(200).json(post);
     } catch (err) {
       return res.status(500).json({ message: err.message });
@@ -38,7 +37,10 @@ class PostController {
           )
           .sort({ createdAt: "desc" });
       });
+
       const followingPosts = (await Promise.all(promise)).flat();
+
+      console.log("followingPosts ", followingPosts);
 
       const currentUserPosts = await Post.find({ user: req.user.id })
         .populate("user", "first_name last_name username picture gender")
