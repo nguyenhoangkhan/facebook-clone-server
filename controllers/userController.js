@@ -140,7 +140,7 @@ class userController {
     try {
       const { username } = req.params;
 
-      // User
+      // Current User
       const user = await User.findById(req.user.id);
 
       // Current Profile
@@ -327,8 +327,8 @@ class userController {
         const receiver = await User.findById(req.params.id);
 
         if (
-          !receiver.followers.includes(sender._id) &&
-          !sender.following.includes(receiver._id)
+          receiver.followers.includes(sender._id) &&
+          sender.following.includes(receiver._id)
         ) {
           await receiver.updateOne({
             $pull: { followers: sender._id },
