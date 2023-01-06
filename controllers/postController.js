@@ -21,6 +21,7 @@ class PostController {
     try {
       const posts = await Post.find({})
         .populate("user", "first_name last_name username picture gender ")
+        .populate("comments.commentBy", "last_name first_name username picture")
         .sort({ createdAt: "desc" });
       return res.status(200).json(posts);
     } catch (err) {

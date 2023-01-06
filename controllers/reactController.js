@@ -13,7 +13,7 @@ class ReactController {
 
       if (!check) {
         await new React({
-          react: react,
+          react,
           post: postId,
           reactBy: mongoose.Types.ObjectId(req.user.id),
         }).save();
@@ -95,7 +95,7 @@ class ReactController {
 
       return res.status(200).json({
         reacts,
-        currentUserReact: currentUserReact.react,
+        currentUserReact: currentUserReact?.react,
         total: reacts.reduce((acc, curr) => (acc += curr.count), 0),
       });
     } catch (err) {

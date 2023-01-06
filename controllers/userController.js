@@ -204,6 +204,7 @@ class userController {
 
       const post = await Post.find({ user: profile._id })
         .populate("user", "-password")
+        .populate("comments.commentBy", "last_name first_name username picture")
         .sort({ createdAt: "desc" });
 
       return res.json({ ...profile.toObject(), post, friendship });
