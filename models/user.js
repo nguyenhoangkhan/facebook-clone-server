@@ -94,6 +94,10 @@ const userSchema = new Schema(
           type: Schema.ObjectId,
           ref: "User",
         },
+        createdAt: {
+          type: Date,
+          required: true,
+        },
       },
     ],
     details: {

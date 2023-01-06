@@ -40,8 +40,6 @@ class PostController {
 
       const followingPosts = (await Promise.all(promise)).flat();
 
-      console.log("followingPosts ", followingPosts);
-
       const currentUserPosts = await Post.find({ user: req.user.id })
         .populate("user", "first_name last_name username picture gender")
         .populate("comments.commentBy", "last_name first_name username picture")

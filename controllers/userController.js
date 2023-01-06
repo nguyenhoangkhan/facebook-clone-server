@@ -213,26 +213,6 @@ class userController {
     }
   }
 
-  // Search User [GET]
-  async searchUser(req, res) {
-    try {
-      const { q } = req.query;
-      const users = await User.find({});
-
-      const result = users.filter(
-        (user) =>
-          user.username.toLowerCase().includes(q.toLowerCase()) ||
-          user.first_name.toLowerCase().includes(q.toLowerCase()) ||
-          user.last_name.toLowerCase().includes(q.toLowerCase()) ||
-          user.email.toLowerCase().includes(q.toLowerCase())
-      );
-
-      return res.status(200).json(result);
-    } catch {
-      return res.status(500).json({ message: err.message });
-    }
-  }
-
   // User Avatar [PATCH]
   async uploadPictureProfile(req, res) {
     try {
