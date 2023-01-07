@@ -34,11 +34,18 @@ class SearchController {
       const check = user.search.find((x) => x.user.equals(searchUser));
 
       if (!check) {
-        const result = await User.findByIdAndUpdate(req.user.id, {
-          $push: {
-            search: { user: searchUser, createdAt: new Date() },
+        const result = await User.findByIdAndUpdate(
+          req.user.id,
+          {
+            $push: {
+              search: { user: searchUser, createdAt: new Date() },
+            },
           },
-        });
+          {
+            new: true,
+          }
+        ).populate("search.user", "first_name last_name picture username");
+
         return res.status(200).json(result);
       }
 
