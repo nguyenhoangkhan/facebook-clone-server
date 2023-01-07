@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const User = require("../models/user.js");
 
 class friendController {
@@ -12,11 +13,8 @@ class friendController {
           !receiver.friends.includes(sender._id) &&
           !sender.friends.includes(receiver._id)
         ) {
-          await receiver.updateOne({
-            $push: { request: sender._id },
-          });
-          await receiver.updateOne({
-            $push: { followers: sender._id },
+          await receiver.update({
+            $push: { followers: sender._id, request: sender._id },
           });
           await sender.updateOne({
             $push: { following: receiver._id },
@@ -50,11 +48,19 @@ class friendController {
           receiver.friends.includes(sender._id) &&
           sender.friends.includes(receiver._id)
         ) {
-          await receiver.updateOne({
-            $pull: { friends: sender._id },
+          await receiver.update({
+            $pull: {
+              friends: sender._id,
+              following: sender._id,
+              followers: sender._id,
+            },
           });
-          await sender.updateOne({
-            $pull: { friends: receiver._id },
+          await sender.update({
+            $pull: {
+              friends: receiver._id,
+              following: receiver._id,
+              followers: receiver._id,
+            },
           });
 
           return res.status(200).json({
@@ -111,17 +117,22 @@ class friendController {
 
         if (receiver.request.includes(sender._id)) {
           await receiver.update({
-            $pull: { request: sender._id, followers: sender._id },
-          });
-          await sender.updateOne({
-            $pull: { following: receiver._id },
+            $pull: { request: sender._id },
           });
 
-          await sender.updateOne({
-            $push: { friends: receiver._id },
+          await sender.update({
+            $push: {
+              friends: receiver._id,
+              followers: receiver._id,
+              following: receiver._id,
+            },
           });
-          await receiver.updateOne({
-            $push: { friends: sender._id },
+          await receiver.update({
+            $push: {
+              friends: sender._id,
+              followers: sender._id,
+              following: sender._id,
+            },
           });
 
           return res.status(200).json({
@@ -171,6 +182,29 @@ class friendController {
           message: "Bạn không thể hủy yêu cầu kết bạn từ chính mình",
         });
       }
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  async getFriendsPageInfos(req, res) {
+    try {
+      const user = await User.findById(req.user.id)
+        .select("friends request")
+        .populate("friends", "first_name last_name username picture")
+        .populate("request", "first_name last_name username picture");
+
+      const requestsSent = await User.find({
+        request: mongoose.Types.ObjectId(req.user.id),
+      });
+
+      const result = {
+        friends: user.friends,
+        request: user.request,
+        sent: requestsSent,
+      };
+
+      return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }

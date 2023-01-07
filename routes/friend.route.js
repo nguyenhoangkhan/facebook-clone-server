@@ -11,7 +11,6 @@ router.patch(
   userAuth,
   friendController.deleteFriendRequest
 );
-
 router.patch(
   "/accept-friend-request/:id",
   userAuth,
@@ -21,6 +20,11 @@ router.patch(
   "/cancel-friend-request/:id",
   userAuth,
   friendController.cancelFriendRequest
+);
+router.get(
+  "/getFriendsPageInfos",
+  userAuth,
+  friendController.getFriendsPageInfos
 );
 
 module.exports = router;
