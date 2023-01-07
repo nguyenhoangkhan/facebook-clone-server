@@ -7,6 +7,10 @@ class SearchController {
       const { q } = req.query;
       const users = await User.find({});
 
+      if (!users) {
+        return res.status(400).json({ message: "Không tìm thấy người dùng" });
+      }
+
       const result = users.filter(
         (user) =>
           user.username.toLowerCase().includes(q.toLowerCase()) ||
@@ -15,13 +19,13 @@ class SearchController {
           user.email.toLowerCase().includes(q.toLowerCase())
       );
       return res.status(200).json(result.slice(0, 10));
-    } catch {
+    } catch (err) {
       return res.status(500).json({ message: err.message });
     }
   }
 
   // Add Search User History [PATCH]
-  async addSearchHistory(req, res) {
+  async addSearchUserHistory(req, res) {
     try {
       const { searchUser } = req.body;
 
@@ -50,6 +54,21 @@ class SearchController {
         }
       );
       return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  // Get Search User History [GET]
+  async getSearchUserHistory(req, res) {
+    try {
+      const user = await User.findOne({ _id: req.user.id }).populate(
+        "search.user",
+        "picture first_name last_name username"
+      );
+      const searchHistory = user.search;
+
+      return res.status(200).json(searchHistory);
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
