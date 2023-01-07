@@ -73,6 +73,23 @@ class SearchController {
       return res.status(500).json({ message: err.message });
     }
   }
+
+  // Get Search User History [DELETE]
+  async deleteSearchUserHistory(req, res) {
+    try {
+      const { historyId } = req.params;
+
+      const user = await User.findById(req.user.id);
+      const result = await user.updateOne({
+        $pull: {
+          search: { user: historyId },
+        },
+      });
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = new SearchController();
