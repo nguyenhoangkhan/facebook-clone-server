@@ -1,4 +1,3 @@
-const { default: mongoose } = require("mongoose");
 const User = require("../models/user.js");
 
 class friendController {
@@ -195,7 +194,7 @@ class friendController {
         .populate("request", "first_name last_name username picture");
 
       const requestsSent = await User.find({
-        request: mongoose.Types.ObjectId(req.user.id),
+        request: req.user.id,
       });
 
       const result = {

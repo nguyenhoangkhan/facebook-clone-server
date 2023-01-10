@@ -9,7 +9,7 @@ router.post("/createPost", userAuth, postController.create);
 
 router.get("/getAllPosts", userAuth, postController.get);
 
-router.post("/getDeletedPosts", userAuth, postController.getDeletedPosts);
+router.get("/getDeletedPosts", userAuth, postController.getDeletedPosts);
 router.patch("/restorePosts", userAuth, postController.restore);
 
 router.patch("/comment", userAuth, commentController.createComment);

@@ -61,6 +61,7 @@ class PostController {
       const posts = await Post.find({})
         .populate("user", "first_name last_name username picture gender")
         .sort({ createdAt: "desc" });
+
       return res.status(200).json(posts);
     } catch (err) {
       return res.status(500).json({ message: err.message });
@@ -69,9 +70,9 @@ class PostController {
   // GET DELETED POSTS [GET]
   async getDeletedPosts(req, res) {
     try {
-      const posts = await Post.findDeleted({ user: req.body.userId })
+      const posts = await Post.findDeleted({ user: req.user.id })
         .populate("user", "-password")
-        .sort({ createdAt: "desc" });
+        .sort({ deletedAt: "desc" });
 
       return res.status(200).json(posts);
     } catch (err) {
@@ -82,9 +83,7 @@ class PostController {
   async restore(req, res) {
     try {
       await Post.restore({ _id: req.body.postId });
-      // const posts = await Post.findDeleted({ user: req.body.userId })
-      //   .populate("user", "first_name last_name username picture gender")
-      //   .sort({ createdAt: "desc" });
+
       return res.status(200);
     } catch (err) {
       return res.status(500).json({ message: err.message });
