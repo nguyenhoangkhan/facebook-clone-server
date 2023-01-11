@@ -104,6 +104,22 @@ class PostController {
       return res.status(500).json({ message: err.message });
     }
   }
+
+  // SAVE POST [PATCH]
+  async savePost(req, res) {
+    try {
+      await User.findByIdAndUpdate(req.user.id, {
+        $push: {
+          savedPost: { post: req.body.postId, savedAt: new Date() },
+        },
+      });
+      return res.status(200).json({
+        message: `Thêm thành công bài viết ${req.user.id} vào danh sách mục lưu trữ`,
+      });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = new PostController();

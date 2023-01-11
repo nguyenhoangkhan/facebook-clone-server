@@ -14,6 +14,8 @@ router.patch("/restorePosts", userAuth, postController.restore);
 
 router.patch("/comment", userAuth, commentController.createComment);
 
+router.patch("/save", userAuth, postController.savePost);
+
 router.patch("/", userAuth, postController.deletePost);
 router.delete("/:id", userAuth, postController.forceDeletePost);
 
