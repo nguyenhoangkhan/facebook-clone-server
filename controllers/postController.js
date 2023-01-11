@@ -54,8 +54,8 @@ class PostController {
       return res.status(500).json({ message: err.message });
     }
   }
-  // SOFT DELETE POSTS [PATCH]
-  async delete(req, res) {
+  // SOFT DELETE POST [PATCH]
+  async deletePost(req, res) {
     try {
       await Post.delete({ _id: req.body.postId });
       const posts = await Post.find({}).populate(
@@ -80,7 +80,7 @@ class PostController {
       return res.status(500).json({ message: err.message });
     }
   }
-  // RESTORE DELETED POSTS [PATCH]
+  // RESTORE DELETED POST [PATCH]
   async restore(req, res) {
     try {
       await Post.restore({ _id: req.body.postId });
@@ -88,6 +88,18 @@ class PostController {
       return res
         .status(200)
         .json({ message: "Phục hồi thành công bài viết " + req.body.postId });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+  // FORCE DELETE POST [DELETE]
+  async forceDeletePost(req, res) {
+    try {
+      await Post.findByIdAndDelete(req.params.id);
+
+      return res.status(200).json({
+        message: "Đã xóa vĩnh viễn thành công bài viết " + req.params.id,
+      });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
