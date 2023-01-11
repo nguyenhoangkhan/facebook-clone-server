@@ -58,9 +58,10 @@ class PostController {
   async delete(req, res) {
     try {
       await Post.delete({ _id: req.body.postId });
-      const posts = await Post.find({})
-        .populate("user", "first_name last_name username picture gender")
-        .sort({ createdAt: "desc" });
+      const posts = await Post.find({}).populate(
+        "user",
+        "first_name last_name username picture gender"
+      );
 
       return res.status(200).json(posts);
     } catch (err) {
@@ -84,7 +85,9 @@ class PostController {
     try {
       await Post.restore({ _id: req.body.postId });
 
-      return res.status(200);
+      return res
+        .status(200)
+        .json({ message: "Phục hồi thành công bài viết " + req.body.postId });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
